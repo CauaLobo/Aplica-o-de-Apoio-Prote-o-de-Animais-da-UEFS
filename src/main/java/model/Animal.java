@@ -1,15 +1,16 @@
 package model;
 
-public class Animais {
+public class Animal {
     private int id; // Identificador único
     private String nome;
     private String especie;
     private String raca;
     private int idade;
     private String sexo;
-    private String situacaoAtual;
+    private SituacaoAtual situacaoAtual;
+    //ESTUDAR* ENUM
 
-    public Animais(int id, String nome, String especie, String raca, int idade, String sexo, String situacaoAtual) {
+    public Animal(int id, String nome, String especie, String raca, int idade, String sexo, SituacaoAtual situacaoAtual) {
         this.id = id;
         this.nome = nome;
         this.especie = especie;
@@ -72,10 +73,20 @@ public class Animais {
     }
 
     // Situação Atual
-    public String getSituacaoAtual() {
+    public SituacaoAtual getSituacaoAtual() {
         return situacaoAtual;
     }
-    public void setSituacaoAtual(String situacaoAtual) {
+    public void setSituacaoAtual(SituacaoAtual situacaoAtual) {
         this.situacaoAtual = situacaoAtual;
+    }
+
+    public void atualizar(Animal novoAnimal){
+        this.nome= novoAnimal.getNome();
+        this.especie = novoAnimal.getEspecie();
+        this.raca = novoAnimal.getRaca();
+        this.sexo = novoAnimal.getSexo();
+        this.situacaoAtual = novoAnimal.getSituacaoAtual();
+        this.setIdade(novoAnimal.getIdade());
+
     }
 }

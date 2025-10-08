@@ -1,34 +1,30 @@
 package controller;
 
-import model.Animais;
+import model.Animal;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AnimaisController {
+public class AnimalController {
     // Lista simulando um banco de dados em memória
-    private List<Animais> animais = new ArrayList<>();
+    private List<Animal> animais = new ArrayList<>();
+    private static int nextId = 1; // Simula auto-incremento de ID
 
     // CREATE - Cadastrar animal
-    public void adicionarAnimal(Animais animal) {
-        // Verifica se já existe um animal com o mesmo ID
-        for (Animais a : animais) {
-            if (a.getId() == animal.getId()) {
-                System.out.println("Erro: Já existe um animal com o ID " + animal.getId());
-                return;
-            }
-        }
+    public void adicionarAnimal(Animal animal) {
+        animal.setId(nextId);
         animais.add(animal);
+        nextId++;
         System.out.println("Animal cadastrado com sucesso: " + animal.getNome());
     }
 
     // READ - Listar todos os animais
-    public List<Animais> listarAnimais() {
+    public List<Animal> listarAnimais() {
         return animais;
     }
 
     // READ - Buscar animal por ID
-    public Animais buscarAnimalPorId(int id) {
-        for (Animais a : animais) {
+    public Animal buscarAnimalPorId(int id) {
+        for (Animal a : animais) {
             if (a.getId() == id) {
                 return a;
             }
@@ -38,10 +34,10 @@ public class AnimaisController {
     }
 
     // UPDATE - Atualizar animal pelo ID
-    public void atualizarAnimal(int id, Animais novoAnimal) {
-        for (int i = 0; i < animais.size(); i++) {
-            if (animais.get(i).getId() == id) {
-                animais.set(i, novoAnimal);
+    public void atualizarAnimal(int id, Animal novoAnimal) {
+        for (Animal a: animais){
+            if (a.getId()== id){
+                a.atualizar(novoAnimal);
                 System.out.println("Animal com ID " + id + " atualizado com sucesso!");
                 return;
             }
@@ -51,10 +47,10 @@ public class AnimaisController {
 
     // DELETE - Remover animal pelo ID
     public void removerAnimal(int id) {
-        for (int i = 0; i < animais.size(); i++) {
-            if (animais.get(i).getId() == id) {
-                Animais removido = animais.remove(i);
-                System.out.println("Animal removido: " + removido.getNome());
+        for (Animal a: animais) {
+            if (a.getId() == id) {
+                animais.remove(a);
+                System.out.println("Animal com ID " + id + " removido com sucesso!");
                 return;
             }
         }

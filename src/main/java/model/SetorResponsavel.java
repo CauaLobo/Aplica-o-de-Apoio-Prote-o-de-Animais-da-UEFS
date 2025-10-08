@@ -22,7 +22,7 @@ public class SetorResponsavel {
     public String getNome(){
         return nome;
     }
-    public void setNome(){
+    public void setNome(String nome){
         this.nome = nome;
     }
     public String getEndereco(){
@@ -30,5 +30,10 @@ public class SetorResponsavel {
     }
     public void setEndereco(String endereco){
         this.endereco = endereco;
+    }
+
+    public void atualizarSetor(SetorResponsavel novoSetor){
+        this.nome = novoSetor.getNome();
+        this.endereco = novoSetor.getEndereco();
     }
 }

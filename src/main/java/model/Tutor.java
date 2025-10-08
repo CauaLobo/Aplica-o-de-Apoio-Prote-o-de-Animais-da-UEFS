@@ -63,4 +63,10 @@ public class Tutor {
             throw new IllegalArgumentException("E-mail inválido!");
         }
     }
+    public void atualizarTutor(Tutor novoTutor){
+        this.nome = novoTutor.getNome();
+        this.endereco = novoTutor.getEndereco();
+        this.email = novoTutor.getEmail();
+        this.telefone = novoTutor.getTelefone();
+    }
 }
