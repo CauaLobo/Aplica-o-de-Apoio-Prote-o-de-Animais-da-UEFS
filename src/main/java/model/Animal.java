@@ -8,9 +8,10 @@ public class Animal {
     private int idade;
     private String sexo;
     private SituacaoAtual situacaoAtual;
-    //ESTUDAR* ENUM
+    private int SetorResponsavelId; // ID do setor responsável
 
-    public Animal(int id, String nome, String especie, String raca, int idade, String sexo, SituacaoAtual situacaoAtual) {
+    public Animal(int id, String nome, String especie, String raca, int idade, String sexo, SituacaoAtual situacaoAtual, int setorResponsavelId) {
+        this.SetorResponsavelId = setorResponsavelId;
         this.id = id;
         this.nome = nome;
         this.especie = especie;
@@ -88,5 +89,12 @@ public class Animal {
         this.situacaoAtual = novoAnimal.getSituacaoAtual();
         this.setIdade(novoAnimal.getIdade());
 
+    }
+    public int getSetorResponsavelId() {
+        return SetorResponsavelId;
+    }
+
+    public void setSetorResponsavelId(int setorResponsavelId) {
+        SetorResponsavelId = setorResponsavelId;
     }
 }

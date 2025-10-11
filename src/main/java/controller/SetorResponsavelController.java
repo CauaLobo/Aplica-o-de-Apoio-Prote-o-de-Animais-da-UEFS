@@ -1,59 +1,83 @@
 package controller;
 
-
 import model.SetorResponsavel;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class SetorResponsavelController {
-    private List<SetorResponsavel> setores = new ArrayList<>();
-    private static int nextId = 1;
 
-    // CREATE - Cadastrar setor responsavel
+    // Repositório simulado (adapte para sua estrutura de persistência, ex: RepositorioSetor)
+    private final List<SetorResponsavel> repositorio;
+    private int proximoId;
+
+    public SetorResponsavelController() {
+        this.repositorio = new ArrayList<>();
+        this.proximoId = 1;
+
+        // Dados de teste para iniciar o sistema
+        adicionarSetor(new SetorResponsavel(proximoId++, "Reitoria", "Prédio Principal"));
+        adicionarSetor(new SetorResponsavel(proximoId++, "Biblioteca", "Módulo 2"));
+    }
+
+    // --- MÉTODOS DE SERVIÇO ---
+
     public void adicionarSetor(SetorResponsavel setor) {
-        setor.setId(nextId);
-        setores.add(setor);
-        nextId++;
-        System.out.println("Setor cadastrado com sucesso: " + setor.getNome());
-
-
-    }
-    // UPDATE - Atualizar setor pelo ID
-    public void atualizarSetor(int id, SetorResponsavel novoSetor) {
-        for (SetorResponsavel s : setores) {
-            if (s.getId() == id) {
-                s.atualizarSetor(novoSetor);
-                System.out.println("Setor com ID " + id + " atualizado com sucesso!");
-                return;
-            }
+        if (setor.getId() == 0) {
+            setor.setId(proximoId++);
         }
-        System.out.println("Setor com ID " + id + " não encontrado.");
+        repositorio.add(setor);
+        System.out.println("\nSUCESSO: Setor '" + setor.getNome() + "' cadastrado com ID: " + setor.getId());
     }
-    // READ - Listar todos os setores
-    public List<SetorResponsavel> listarSetores() {
-        return setores;
+
+    /**
+     * Permite o cadastro de um novo setor a partir de outra View (rápido).
+     * @return O ID do setor recém-criado.
+     */
+    public int cadastrarSetorRapido(String nome, String endereco) {
+        // Validação básica
+        if (nome == null || nome.trim().isEmpty()) {
+            throw new IllegalArgumentException("O nome do setor não pode ser vazio.");
+        }
+
+        int novoId = proximoId;
+        SetorResponsavel novoSetor = new SetorResponsavel(novoId, nome, endereco);
+
+        // Chama o método principal de adição
+        adicionarSetor(novoSetor);
+
+        return novoId;
     }
-    // READ - Buscar setor por ID
+
     public SetorResponsavel buscarSetorPorId(int id) {
-        for (SetorResponsavel s : setores) {
-            if (s.getId() == id) {
-                return s;
+        for (SetorResponsavel setor : repositorio) {
+            if (setor.getId() == id) {
+                return setor;
             }
         }
-        System.out.println("Setor com ID " + id + " não encontrado.");
         return null;
     }
-    // DELETE - Remover setor pelo ID
-    public void removerSetor(int id){
-        for (SetorResponsavel s: setores){
-            if (s.getId() == id){
-                setores.remove(s);
-                System.out.println("Setor com ID " + id + " removido com sucesso!");
-                return;
-            }
+
+    public List<SetorResponsavel> listarSetores() {
+        return new ArrayList<>(repositorio);
+    }
+
+    public void atualizarSetor(int id, SetorResponsavel dadosNovos) {
+        SetorResponsavel setorExistente = buscarSetorPorId(id);
+        if (setorExistente != null) {
+            setorExistente.setNome(dadosNovos.getNome());
+            setorExistente.setEndereco(dadosNovos.getEndereco());
+            System.out.println("SUCESSO: Setor ID " + id + " atualizado.");
+        } else {
+            System.out.println("ERRO: Setor ID " + id + " não encontrado para atualização.");
         }
-        System.out.println("Setor com ID " + id + " não encontrado.");
+    }
+
+    public void removerSetor(int id) {
+        boolean removido = repositorio.removeIf(setor -> setor.getId() == id);
+        if (removido) {
+            System.out.println("SUCESSO: Setor ID " + id + " removido.");
+        } else {
+            System.out.println("ERRO: Setor ID " + id + " não encontrado.");
+        }
     }
 }
-

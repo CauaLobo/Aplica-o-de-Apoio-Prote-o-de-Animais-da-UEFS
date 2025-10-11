@@ -6,8 +6,10 @@ public class Tutor {
     private Endereco endereco;
     private String telefone;
     private String email;
+    private int setorResponsavelId; // ID do setor responsável
 
-    public Tutor(int id, String nome, Endereco endereco, String telefone, String email) {
+    public Tutor(int id, String nome, Endereco endereco, String telefone, String email, int setorResponsavelId) {
+        this.setorResponsavelId = setorResponsavelId;
         this.id = id;
         this.nome = nome;
         this.endereco = endereco;
@@ -68,5 +70,13 @@ public class Tutor {
         this.endereco = novoTutor.getEndereco();
         this.email = novoTutor.getEmail();
         this.telefone = novoTutor.getTelefone();
+    }
+
+    public int getSetorResponsavelId() {
+        return setorResponsavelId;
+    }
+
+    public void setSetorResponsavelId(int setorResponsavelId) {
+        this.setorResponsavelId = setorResponsavelId;
     }
 }
