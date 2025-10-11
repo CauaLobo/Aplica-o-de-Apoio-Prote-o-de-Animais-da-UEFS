@@ -1,7 +1,10 @@
 package view;
 
 import controller.AnimalController;
+import controller.SetorResponsavelController;
 import model.Animal;
+import model.Especie;
+import model.SetorResponsavel;
 import model.SituacaoAtual;
 import java.util.InputMismatchException;
 import java.util.List;
@@ -13,10 +16,12 @@ import java.util.Scanner;
 public class AnimalView {
 
     private final AnimalController controller;
+    private final SetorResponsavelController setorResponsavelController;
     private final Scanner scanner;
 
-    public AnimalView(AnimalController controller, Scanner scanner) {
+    public AnimalView(AnimalController controller, SetorResponsavelController setorResponsavelController, Scanner scanner) {
         this.controller = controller;
+        this.setorResponsavelController = setorResponsavelController;
         this.scanner = scanner;
     }
 
@@ -51,13 +56,19 @@ public class AnimalView {
     }
 
     private void cadastrarAnimal() {
+
+
+        if (setorResponsavelController.listarSetores().isEmpty()) {
+            System.out.println("\nERRO: Nenhum Setor Responsável cadastrado. Cadastre um setor antes de adicionar animais.");
+            return;
+        }
+
         try {
             System.out.println("\n--- CADASTRO DE ANIMAL ---");
             System.out.print("Nome: ");
             String nome = scanner.nextLine();
 
-            System.out.print("Espécie (Ex: gato, cachorro): ");
-            String especie = scanner.nextLine();
+            Especie especie = selecionarEspecie(); // Usando enum
 
             System.out.print("Raça (Opcional): ");
             String raca = scanner.nextLine();
@@ -70,18 +81,37 @@ public class AnimalView {
             String sexo = scanner.nextLine();
 
             SituacaoAtual situacao = selecionarSituacao();
+            SetorResponsavel setor = selecionarSetorResponsavel();
 
-            Animal novoAnimal = new Animal(0, nome, especie, raca, idade, sexo, situacao);
+            Animal novoAnimal = new Animal(nome, especie, raca, idade, sexo, situacao, setor);
             controller.adicionarAnimal(novoAnimal);
 
         } catch (IllegalArgumentException e) {
-            System.out.println("\nERRO de Validação: Falha ao cadastrar: " + e.getMessage());
+            System.out.println("\nERRO de Validação: Falha ao cadastrar animal: " + e.getMessage());
         } catch (InputMismatchException e) {
             System.out.println("\nERRO: Entrada de dados inválida. Digite números onde solicitado.");
             scanner.nextLine();
         } catch (Exception e) {
             System.out.println("\nERRO: Ocorreu um erro no cadastro.");
         }
+    }
+
+    private SetorResponsavel selecionarSetorResponsavel() {
+        List<SetorResponsavel> setores = setorResponsavelController.listarSetores();
+        System.out.println("\nSelecione o Setor Responsável (número):");
+        for (int i = 0; i < setores.size(); i++) {
+            System.out.println((i + 1) + ". " + setores.get(i).getNome() + " - " + setores.get(i).getEndereco());
+        }
+        System.out.print("Opção: ");
+        int escolha = scanner.nextInt();
+        scanner.nextLine();
+
+        if (escolha > 0 && escolha <= setores.size()) {
+            return setores.get(escolha - 1);
+        } else {
+            throw new IllegalArgumentException("Opção de Setor inválida. Seleção cancelada.");
+        }
+
     }
 
     private SituacaoAtual selecionarSituacao() {
@@ -107,11 +137,12 @@ public class AnimalView {
             return;
         }
         System.out.println("\n--- RELAÇÃO DE ANIMAIS (" + lista.size() + " total) ---");
-        System.out.printf("| %-4s | %-15s | %-12s | %-8s | %-15s |\n", "ID", "NOME", "ESPÉCIE", "IDADE", "SITUAÇÃO");
+        System.out.printf("| %-4s | %-15s | %-12s | %-8s | %-15s | %-10s |\n", "ID", "NOME", "ESPÉCIE", "IDADE", "SITUAÇÃO", "SETOR");
         System.out.println("-----------------------------------------------------------------------");
         for (Animal a : lista) {
-            System.out.printf("| %-4d | %-15s | %-12s | %-8d | %-15s |\n",
-                    a.getId(), a.getNome(), a.getEspecie(), a.getIdade(), a.getSituacaoAtual());
+            System.out.printf("| %-4s | %-15s | %-12s | %-8d | %-15s | %-10s |\n",
+                    a.getId(), a.getNome(), a.getEspecie(), a.getIdade(), a.getSituacaoAtual(), a.getSetorResponsavel().getNome()
+            );
         }
         System.out.println("-----------------------------------------------------------------------");
     }
@@ -142,6 +173,14 @@ public class AnimalView {
             if (!novaIdadeStr.isEmpty()) {
                 int novaIdade = Integer.parseInt(novaIdadeStr);
                 animalExistente.setIdade(novaIdade);
+            }
+
+            System.out.println("\nEspécie Atual: " + animalExistente.getEspecie());
+            System.out.print("Deseja alterar a Espécie? (S/N): ");
+            String alterarEspecie = scanner.nextLine().trim().toUpperCase();
+            if (alterarEspecie.equals("S")) {
+                Especie novaEspecie = selecionarEspecie();
+                animalExistente.setEspecie(novaEspecie);
             }
 
             // Situação Atual
@@ -190,4 +229,21 @@ public class AnimalView {
             scanner.nextLine();
         }
     }
+
+    private Especie selecionarEspecie() {
+        System.out.println("\nSelecione a Espécie:");
+        Especie[] opcoes = Especie.values();
+        for (int i = 0; i < opcoes.length; i++) {
+            System.out.println((i + 1) + ". " + opcoes[i]);
+        }
+        System.out.print("Opção: ");
+        int escolha = scanner.nextInt();
+        scanner.nextLine();
+        if (escolha > 0 && escolha <= opcoes.length) {
+            return opcoes[escolha - 1];
+        } else {
+            throw new IllegalArgumentException("Opção de Espécie inválida.");
+        }
+    }
+
 }

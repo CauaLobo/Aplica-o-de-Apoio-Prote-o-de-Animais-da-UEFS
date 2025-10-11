@@ -1,5 +1,6 @@
 package view;
 
+import controller.SetorResponsavelController;
 import controller.TutorController;
 import model.Tutor;
 import model.Endereco;
@@ -77,7 +78,7 @@ public class TutorView {
 
             Endereco endereco = new Endereco(rua, bairro, cep, cidade, estado);
 
-            Tutor novoTutor = new Tutor(0, nome, endereco, telefone, email);
+            Tutor novoTutor = new Tutor(nome, endereco, telefone, email);
             controller.adicionarTutor(novoTutor);
 
         } catch (IllegalArgumentException e) {
@@ -180,4 +181,6 @@ public class TutorView {
             scanner.nextLine();
         }
     }
+
+
 }

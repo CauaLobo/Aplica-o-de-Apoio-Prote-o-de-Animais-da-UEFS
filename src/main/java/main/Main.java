@@ -29,10 +29,11 @@ public class Main {
         // Inicializa Views. ATENÇÃO: SetorResponsavelView está sendo chamada com o mínimo de argumentos.
         AnimalView animalView = new AnimalView(animalController, setorController, scanner);
 
-        // LINHA CORRIGIDA PARA EVITAR O ERRO DE CONSTRUTOR:
-        SetorResponsavelView setorView = new SetorResponsavelView(setorController, scanner);
+        TutorView tutorView = new TutorView(tutorController, scanner);
 
-        TutorView tutorView = new TutorView(tutorController, setorController, scanner);
+        // LINHA CORRIGIDA PARA EVITAR O ERRO DE CONSTRUTOR:
+        SetorResponsavelView setorView = new SetorResponsavelView(setorController, tutorController, scanner);
+
 
         // --- INÍCIO DA APLICAÇÃO ---
         System.out.println("\n=================================================");

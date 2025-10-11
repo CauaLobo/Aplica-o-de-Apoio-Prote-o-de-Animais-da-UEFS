@@ -1,7 +1,10 @@
 package view;
 
 import controller.SetorResponsavelController;
+import controller.TutorController;
 import model.SetorResponsavel;
+import model.Tutor;
+
 import java.util.Scanner;
 import java.util.List;
 import java.util.InputMismatchException;
@@ -12,10 +15,12 @@ import java.util.InputMismatchException;
 public class SetorResponsavelView {
 
     private final SetorResponsavelController controller;
+    private final TutorController tutorController;
     private final Scanner scanner;
 
-    public SetorResponsavelView(SetorResponsavelController controller, Scanner scanner) {
+    public SetorResponsavelView(SetorResponsavelController controller, TutorController tutorController, Scanner scanner) {
         this.controller = controller;
+        this.tutorController = tutorController;
         this.scanner = scanner;
     }
 
@@ -50,6 +55,15 @@ public class SetorResponsavelView {
     }
 
     private void cadastrarSetor() {
+
+        List<Tutor> tutores = tutorController.listarTutores();
+
+        // Verifica se há tutores cadastrados antes de permitir o cadastro de setores
+        if (tutores.isEmpty()) {
+            System.out.println("\nERRO: É necessário cadastrar pelo menos um tutor antes de cadastrar setores responsáveis.");
+            return;
+        }
+
         try {
             System.out.println("\n--- NOVO CADASTRO DE SETOR ---");
             System.out.print("Nome do Setor: ");
@@ -58,9 +72,10 @@ public class SetorResponsavelView {
             System.out.print("Localização/Endereço (Ex: Módulo 1): ");
             String endereco = scanner.nextLine();
 
-            SetorResponsavel novoSetor = new SetorResponsavel(0, nome, endereco);
-            controller.adicionarSetor(novoSetor);
+            Tutor tutorSelecionado = selecionarTutorParaSetor(tutores);
 
+            SetorResponsavel novoSetor = new SetorResponsavel(nome, endereco, tutorSelecionado);
+            controller.adicionarSetor(novoSetor);
         } catch (Exception e) {
             System.out.println("\nERRO: Ocorreu um erro no cadastro: " + e.getMessage());
         }
@@ -71,13 +86,16 @@ public class SetorResponsavelView {
             System.out.println("\nNenhum setor cadastrado.");
             return;
         }
+
         System.out.println("\n--- RELAÇÃO DE SETORES RESPONSÁVEIS ---");
-        System.out.printf("| %-4s | %-25s | %-25s |\n", "ID", "NOME", "LOCALIZAÇÃO");
+        System.out.printf("| %-4s | %-25s | %-25s | %-15s |\n", "ID", "NOME", "LOCALIZAÇÃO", "TUTOR RESPONSÁVEL");
         System.out.println("----------------------------------------------------------");
         for (SetorResponsavel s : lista) {
-            System.out.printf("| %-4d | %-25s | %-25s |\n",
-                    s.getId(), s.getNome(), s.getEndereco());
+            System.out.printf("| %-4d | %-25s | %-25s | %-15s |\n",
+                    s.getId(), s.getNome(), s.getEndereco(), s.getTutorResponsavel().getNome()
+            );
         }
+
         System.out.println("----------------------------------------------------------");
     }
 
@@ -138,6 +156,38 @@ public class SetorResponsavelView {
         } catch (InputMismatchException e) {
             System.out.println("\nERRO: Entrada inválida. O ID deve ser um número inteiro.");
             scanner.nextLine();
+        }
+    }
+
+    private Tutor selecionarTutorParaSetor(List<Tutor> tutores) {
+        System.out.println("\n--- SELECIONAR TUTOR PARA O SETOR ---");
+        System.out.printf("| %-4s | %-25s | %-15s |\n", "ID", "NOME", "TELEFONE");
+        System.out.println("--------------------------------------------------");
+        for (Tutor t : tutores) {
+            System.out.printf("| %-4d | %-25s | %-15s |\n",
+                    t.getId(), t.getNome(), t.getTelefone());
+        }
+        System.out.println("--------------------------------------------------");
+
+        while (true) {
+            System.out.print("Digite o ID do tutor para vincular ao setor: ");
+            try {
+                int tutorId = scanner.nextInt();
+                scanner.nextLine();
+
+                Tutor tutorSelecionado = tutorController.buscarTutorPorId(tutorId);
+                if (tutorSelecionado != null) {
+                    System.out.println("Tutor '" + tutorSelecionado.getNome() + "' vinculado ao setor.");
+                    return null;
+                } else {
+                    System.out.println("Tutor com ID " + tutorId + " não encontrado. Tente novamente.");
+                }
+
+                return tutorSelecionado;
+            } catch (InputMismatchException e) {
+                System.out.println("ERRO: Entrada inválida. O ID deve ser um número inteiro.");
+                scanner.nextLine();
+            }
         }
     }
 }

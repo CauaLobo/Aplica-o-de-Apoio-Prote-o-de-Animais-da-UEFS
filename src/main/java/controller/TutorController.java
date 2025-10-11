@@ -6,14 +6,10 @@ import java.util.ArrayList;
 
 public class TutorController {
     public List<Tutor> tutor = new ArrayList<>();
-    private static int nextId = 1;
 
     // CREATE - Cadastrar tutor
-
     public void adicionarTutor(Tutor novoTutor) {
-        novoTutor.setId(nextId);
         tutor.add(novoTutor);
-        nextId++;
         System.out.println("Tutor cadastrado com sucesso: " + novoTutor.getNome());
     }
     // UPDATE - Atualizar tutor pelo ID

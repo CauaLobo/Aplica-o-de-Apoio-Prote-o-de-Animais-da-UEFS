@@ -1,32 +1,32 @@
 package model;
 
 public class Animal {
+    private static int contadorIds = 1;
+
     private int id; // Identificador único
     private String nome;
-    private String especie;
+    private Especie especie;
     private String raca;
     private int idade;
     private String sexo;
     private SituacaoAtual situacaoAtual;
-    private int SetorResponsavelId; // ID do setor responsável
+    private SetorResponsavel setorResponsavel;
 
-    public Animal(int id, String nome, String especie, String raca, int idade, String sexo, SituacaoAtual situacaoAtual, int setorResponsavelId) {
-        this.SetorResponsavelId = setorResponsavelId;
-        this.id = id;
+    public Animal(String nome, Especie especie, String raca, int idade, String sexo, SituacaoAtual situacaoAtual, SetorResponsavel setorResponsavel) {
+        this.id = contadorIds;
         this.nome = nome;
         this.especie = especie;
         this.raca = raca;
         setIdade(idade); // validação no setter
         this.sexo = sexo;
         this.situacaoAtual = situacaoAtual;
+        this.setorResponsavel = setorResponsavel;
+        contadorIds++;
     }
 
     // ID
     public int getId() {
         return id;
-    }
-    public void setId(int id) {
-        this.id = id;
     }
 
     // Nome
@@ -38,10 +38,10 @@ public class Animal {
     }
 
     // Espécie
-    public String getEspecie() {
+    public Especie getEspecie() {
         return especie;
     }
-    public void setEspecie(String especie) {
+    public void setEspecie(Especie especie) {
         this.especie = especie;
     }
 
@@ -88,13 +88,12 @@ public class Animal {
         this.sexo = novoAnimal.getSexo();
         this.situacaoAtual = novoAnimal.getSituacaoAtual();
         this.setIdade(novoAnimal.getIdade());
+        this.setorResponsavel = novoAnimal.getSetorResponsavel();
 
     }
-    public int getSetorResponsavelId() {
-        return SetorResponsavelId;
-    }
 
-    public void setSetorResponsavelId(int setorResponsavelId) {
-        SetorResponsavelId = setorResponsavelId;
+    // Setor Responsável
+    public SetorResponsavel getSetorResponsavel() {
+        return setorResponsavel;
     }
 }

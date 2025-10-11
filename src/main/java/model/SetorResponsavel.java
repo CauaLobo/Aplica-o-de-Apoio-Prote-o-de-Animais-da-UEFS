@@ -1,22 +1,23 @@
 package model;
 
 public class SetorResponsavel {
+    private static int contadorIds = 1;
+
     private int id;
     private String nome;
     private String endereco;
+    private Tutor tutorResponsavel;
 
-    public SetorResponsavel(int id,String nome,String endereco){
-        this.id = id;
+    public SetorResponsavel(String nome,String endereco, Tutor tutorResponsavel){
+        this.id = contadorIds;
         this.nome = nome;
         this.endereco = endereco;
+        this.tutorResponsavel = tutorResponsavel;
+        contadorIds++;
     }
 
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getNome(){
@@ -35,5 +36,14 @@ public class SetorResponsavel {
     public void atualizarSetor(SetorResponsavel novoSetor){
         this.nome = novoSetor.getNome();
         this.endereco = novoSetor.getEndereco();
+        this.tutorResponsavel = novoSetor.getTutorResponsavel();
+    }
+
+    public Tutor getTutorResponsavel() {
+        return tutorResponsavel;
+    }
+
+    public void setTutorResponsavel(Tutor tutorResponsavel) {
+        this.tutorResponsavel = tutorResponsavel;
     }
 }

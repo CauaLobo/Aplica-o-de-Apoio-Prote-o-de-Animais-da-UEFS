@@ -1,28 +1,27 @@
 package model;
 
 public class Tutor {
+    private static int contadorIds = 1;
+
     private int id; // Identificador único
     private String nome;
     private Endereco endereco;
     private String telefone;
     private String email;
-    private int setorResponsavelId; // ID do setor responsável
 
-    public Tutor(int id, String nome, Endereco endereco, String telefone, String email, int setorResponsavelId) {
-        this.setorResponsavelId = setorResponsavelId;
-        this.id = id;
+    public Tutor(String nome, Endereco endereco, String telefone, String email) {
+        this.id = contadorIds;
         this.nome = nome;
         this.endereco = endereco;
         setTelefone(telefone);
         setEmail(email);
+
+        contadorIds++;
     }
 
     // ID
     public int getId() {
         return id;
-    }
-    public void setId(int id) {
-        this.id = id;
     }
 
     // Nome
@@ -70,13 +69,5 @@ public class Tutor {
         this.endereco = novoTutor.getEndereco();
         this.email = novoTutor.getEmail();
         this.telefone = novoTutor.getTelefone();
-    }
-
-    public int getSetorResponsavelId() {
-        return setorResponsavelId;
-    }
-
-    public void setSetorResponsavelId(int setorResponsavelId) {
-        this.setorResponsavelId = setorResponsavelId;
     }
 }

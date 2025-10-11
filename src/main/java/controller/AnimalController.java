@@ -7,13 +7,10 @@ import java.util.List;
 public class AnimalController {
     // Lista simulando um banco de dados em memória
     private List<Animal> animais = new ArrayList<>();
-    private static int nextId = 1; // Simula auto-incremento de ID
 
     // CREATE - Cadastrar animal
     public void adicionarAnimal(Animal animal) {
-        animal.setId(nextId);
         animais.add(animal);
-        nextId++;
         System.out.println("Animal cadastrado com sucesso: " + animal.getNome());
     }
 
