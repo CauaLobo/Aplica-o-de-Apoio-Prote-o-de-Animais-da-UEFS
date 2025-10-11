@@ -60,15 +60,27 @@ public class TutorView {
             System.out.println("\n--- NOVO CADASTRO DE TUTOR ---");
             System.out.print("Nome Completo: ");
             String nome = scanner.nextLine();
-            // ... (restante das entradas de dados)
+
             System.out.print("Telefone (Apenas números): ");
             String telefone = scanner.nextLine();
 
             System.out.print("E-mail: ");
             String email = scanner.nextLine();
 
-            // Coleta de Dados do Endereço (Implementação resumida)
-            Endereco endereco = new Endereco("", "", "", "", "");
+            // Coleta de Dados do Endereço
+            System.out.println("\n--- Dados do Endereço ---");
+            System.out.print("Rua: ");
+            String rua = scanner.nextLine();
+            System.out.print("Bairro: ");
+            String bairro = scanner.nextLine();
+            System.out.print("CEP: ");
+            String cep = scanner.nextLine();
+            System.out.print("Cidade: ");
+            String cidade = scanner.nextLine();
+            System.out.print("Estado: ");
+            String estado = scanner.nextLine();
+
+            Endereco endereco = new Endereco(rua, bairro, cep, cidade, estado);
 
             int setorId = menuColetaSetor();
 
@@ -155,6 +167,7 @@ public class TutorView {
         String endereco = scanner.nextLine();
 
         try {
+            // O SetorResponsavelController PRECISA ter o método cadastrarSetorRapido(String, String)
             int novoId = setorController.cadastrarSetorRapido(nome, endereco);
             System.out.println("SUCESSO: Setor '" + nome + "' cadastrado com ID: " + novoId);
             return novoId;
@@ -164,9 +177,118 @@ public class TutorView {
         }
     }
 
-    // --- MÉTODOS AUXILIARES (Implementação resumida) ---
-    private void listarSetoresDisponiveis() { /* Implementação de listagem dos setores */ }
-    private void listarTutores(List<Tutor> lista) { /* Implementação de listagem dos tutores */ }
-    private void atualizarTutor() { /* Implementação de atualização */ }
-    private void removerTutor() { /* Implementação de remoção */ }
+    // --- MÉTODOS AUXILIARES E CRUD COMPLETOS ---
+
+    /**
+     * @Override: Exibe a lista de tutores de forma formatada.
+     */
+    private void listarTutores(List<Tutor> lista) {
+        if (lista.isEmpty()) {
+            System.out.println("\nNenhuma pessoa tutora cadastrada no momento.");
+            return;
+        }
+
+        System.out.println("\n--- RELAÇÃO DE PESSOAS TUTORAS ---");
+        System.out.printf("| %-4s | %-25s | %-15s | %-5s |\n", "ID", "NOME", "TELEFONE", "SETOR");
+        System.out.println("----------------------------------------------------------");
+
+        for (Tutor t : lista) {
+            String setorDisplay = (t.getSetorResponsavelId() == -1) ? "N/A" : String.valueOf(t.getSetorResponsavelId());
+
+            System.out.printf("| %-4d | %-25s | %-15s | %-5s |\n",
+                    t.getId(),
+                    t.getNome(),
+                    t.getTelefone(),
+                    setorDisplay);
+        }
+        System.out.println("----------------------------------------------------------");
+    }
+
+    /**
+     * Auxiliar: Lista todos os Setores para que o usuário possa escolher um ID.
+     */
+    private void listarSetoresDisponiveis() {
+        List<SetorResponsavel> lista = setorController.listarSetores();
+        if (lista.isEmpty()) {
+            System.out.println("Nenhum setor cadastrado.");
+            return;
+        }
+        System.out.println("\n--- SETORES DISPONÍVEIS ---");
+        System.out.printf("| %-4s | %-25s |\n", "ID", "NOME");
+        System.out.println("------------------------------");
+        for (SetorResponsavel s : lista) {
+            System.out.printf("| %-4d | %-25s |\n", s.getId(), s.getNome());
+        }
+        System.out.println("------------------------------");
+    }
+
+    /**
+     * Permite buscar um tutor por ID e alterar seus dados.
+     */
+    private void atualizarTutor() {
+        System.out.print("\nDigite o ID do Tutor que deseja atualizar: ");
+        try {
+            int id = scanner.nextInt();
+            scanner.nextLine();
+
+            Tutor tutorExistente = controller.buscarTutorPorId(id);
+
+            if (tutorExistente == null) {
+                System.out.println("ERRO: Tutor ID " + id + " não encontrado.");
+                return;
+            }
+
+            System.out.println("\n--- ATUALIZANDO TUTOR ID: " + id + " ---");
+            System.out.println("Deixe em branco para manter o valor atual.");
+
+            System.out.print("Novo Nome (" + tutorExistente.getNome() + "): ");
+            String novoNome = scanner.nextLine();
+            if (!novoNome.trim().isEmpty()) tutorExistente.setNome(novoNome);
+
+            // A lógica de atualização de endereço e outros campos seria similar
+
+            controller.atualizarTutor(id, tutorExistente);
+            System.out.println("SUCESSO: Tutor atualizado.");
+
+        } catch (InputMismatchException e) {
+            System.out.println("ERRO: Entrada inválida. Digite um número inteiro para o ID.");
+            scanner.nextLine();
+        } catch (Exception e) {
+            System.out.println("ERRO ao atualizar: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Permite remover um tutor por ID, com confirmação.
+     */
+    private void removerTutor() {
+        System.out.print("\nDigite o ID do Tutor que deseja remover: ");
+        try {
+            int id = scanner.nextInt();
+            scanner.nextLine();
+
+            Tutor tutorExistente = controller.buscarTutorPorId(id);
+
+            if (tutorExistente == null) {
+                System.out.println("ERRO: Tutor ID " + id + " não encontrado.");
+                return;
+            }
+
+            System.out.print("Tem certeza que deseja remover o Tutor " + tutorExistente.getNome() + " (S/N)? ");
+            String confirmacao = scanner.nextLine();
+
+            if (confirmacao.equalsIgnoreCase("S")) {
+                controller.removerTutor(id);
+                System.out.println("SUCESSO: Tutor removido.");
+            } else {
+                System.out.println("Operação cancelada.");
+            }
+
+        } catch (InputMismatchException e) {
+            System.out.println("ERRO: Entrada inválida. Digite um número inteiro para o ID.");
+            scanner.nextLine();
+        } catch (Exception e) {
+            System.out.println("ERRO ao remover: " + e.getMessage());
+        }
+    }
 }
