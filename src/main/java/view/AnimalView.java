@@ -1,10 +1,8 @@
 package view;
 
 import controller.AnimalController;
-import controller.SetorResponsavelController;
 import model.Animal;
 import model.SituacaoAtual;
-import model.SetorResponsavel;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
@@ -15,12 +13,10 @@ import java.util.Scanner;
 public class AnimalView {
 
     private final AnimalController controller;
-    private final SetorResponsavelController setorController;
     private final Scanner scanner;
 
-    public AnimalView(AnimalController controller, SetorResponsavelController setorController, Scanner scanner) {
+    public AnimalView(AnimalController controller, Scanner scanner) {
         this.controller = controller;
-        this.setorController = setorController;
         this.scanner = scanner;
     }
 
@@ -38,7 +34,6 @@ public class AnimalView {
             try {
                 opcao = scanner.nextInt();
                 scanner.nextLine();
-
                 switch (opcao) {
                     case 1: cadastrarAnimal(); break;
                     case 2: listarAnimais(controller.listarAnimais()); break;
@@ -76,9 +71,7 @@ public class AnimalView {
 
             SituacaoAtual situacao = selecionarSituacao();
 
-            int setorId = menuColetaSetor();
-
-            Animal novoAnimal = new Animal(0, nome, especie, raca, idade, sexo, situacao, setorId);
+            Animal novoAnimal = new Animal(0, nome, especie, raca, idade, sexo, situacao);
             controller.adicionarAnimal(novoAnimal);
 
         } catch (IllegalArgumentException e) {
@@ -87,247 +80,114 @@ public class AnimalView {
             System.out.println("\nERRO: Entrada de dados inválida. Digite números onde solicitado.");
             scanner.nextLine();
         } catch (Exception e) {
-            System.out.println("\nERRO: Ocorreu um erro no cadastro: " + e.getMessage());
+            System.out.println("\nERRO: Ocorreu um erro no cadastro.");
         }
     }
 
-    // --- LÓGICA DE VINCULAÇÃO CLARA ---
-    private int menuColetaSetor() {
-        int opcao;
-
-        do {
-            System.out.println("\n--- VINCULAR SETOR RESPONSÁVEL ---");
-            System.out.println("1. Vincular a um Setor Existente (Buscar por ID)");
-            System.out.println("2. Cadastrar Novo Setor (Rápido)");
-            System.out.println("3. Listar Setores Disponíveis");
-            System.out.println("0. NÃO VINCULAR (Deixar em aberto)");
-            System.out.print(">>> Escolha uma opção: ");
-
-            try {
-                opcao = scanner.nextInt();
-                scanner.nextLine();
-            } catch (InputMismatchException e) {
-                System.out.println("ERRO: Entrada inválida. Digite apenas o número da opção.");
-                scanner.nextLine();
-                opcao = -1;
-                continue;
-            }
-
-            switch (opcao) {
-                case 1:
-                    int idExistente = vincularSetorExistente();
-                    if (idExistente > 0) return idExistente;
-                    break;
-                case 2:
-                    int idNovo = cadastrarSetorRapidoInterno();
-                    if (idNovo > 0) return idNovo;
-                    break;
-                case 3:
-                    listarSetoresDisponiveis();
-                    break;
-                case 0:
-                    System.out.println("Vínculo de Setor ignorado. Continua sem Setor Responsável.");
-                    return -1; // Retorna -1 para 'Não Vinculado'
-                default:
-                    System.out.println("Opção inválida. Tente novamente.");
-            }
-        } while (true);
-    }
-
-    private int vincularSetorExistente() {
-        System.out.print("Digite o ID do Setor para vincular: ");
-        try {
-            int id = scanner.nextInt();
-            scanner.nextLine();
-            SetorResponsavel setor = setorController.buscarSetorPorId(id);
-
-            if (setor != null) {
-                System.out.println("SUCESSO: Vinculado ao Setor ID " + id + " (" + setor.getNome() + ").");
-                return id;
-            } else {
-                System.out.println("ERRO: Setor ID " + id + " não encontrado. Tente novamente.");
-                return -1;
-            }
-        } catch (InputMismatchException e) {
-            System.out.println("ERRO: ID inválido. Digite um número inteiro.");
-            scanner.nextLine();
-            return -1;
-        }
-    }
-
-    private int cadastrarSetorRapidoInterno() {
-        System.out.println("\n--- CADASTRO RÁPIDO DE NOVO SETOR ---");
-        System.out.print("Nome do Novo Setor: ");
-        String nome = scanner.nextLine();
-
-        System.out.print("Localização/Endereço: ");
-        String endereco = scanner.nextLine();
-
-        try {
-            int novoId = setorController.cadastrarSetorRapido(nome, endereco);
-            System.out.println("SUCESSO: Setor '" + nome + "' cadastrado com ID: " + novoId);
-            return novoId;
-        } catch (Exception e) {
-            System.out.println("ERRO: Falha ao cadastrar o Setor. " + e.getMessage());
-            return -1;
-        }
-    }
-
-    // --- MÉTODOS AUXILIARES E CRUD IMPLEMENTADOS ---
-
-    /**
-     * Permite ao usuário selecionar a Situação Atual do Animal a partir do Enum.
-     */
     private SituacaoAtual selecionarSituacao() {
+        System.out.println("\nSelecione a Situação Atual (número):");
         SituacaoAtual[] opcoes = SituacaoAtual.values();
-        int escolha;
+        for (int i = 0; i < opcoes.length; i++) {
+            System.out.println((i + 1) + ". " + opcoes[i]);
+        }
+        System.out.print("Opção: ");
+        int escolha = scanner.nextInt();
+        scanner.nextLine();
 
-        do {
-            System.out.println("\n*** Selecione a Situação Atual (número): ***");
-            for (int i = 0; i < opcoes.length; i++) {
-                // Exibe o nome da constante do Enum
-                System.out.println("  " + (i + 1) + ". " + opcoes[i]);
-            }
-            System.out.print(">>> Opção: ");
-
-            try {
-                escolha = scanner.nextInt();
-                scanner.nextLine();
-
-                if (escolha > 0 && escolha <= opcoes.length) {
-                    return opcoes[escolha - 1];
-                } else {
-                    System.out.println("Opção inválida. Digite o número correspondente.");
-                }
-            } catch (InputMismatchException e) {
-                System.out.println("ERRO: Entrada inválida. Digite apenas números.");
-                scanner.nextLine();
-                escolha = -1;
-            }
-        } while (true);
+        if (escolha > 0 && escolha <= opcoes.length) {
+            return opcoes[escolha - 1];
+        } else {
+            throw new IllegalArgumentException("Opção de Situação inválida. Seleção cancelada.");
+        }
     }
 
-    /**
-     * Exibe a lista de animais de forma formatada.
-     */
     private void listarAnimais(List<Animal> lista) {
         if (lista.isEmpty()) {
-            System.out.println("\nNenhum animal cadastrado no momento.");
+            System.out.println("\nNenhum animal cadastrado.");
             return;
         }
-
-        System.out.println("\n--- RELAÇÃO DE ANIMAIS CADASTRADOS ---");
-        // Ajuste as larguras conforme sua necessidade
-        System.out.printf("| %-4s | %-15s | %-10s | %-10s | %-5s | %-10s | %-15s | %-5s |\n",
-                "ID", "NOME", "ESPÉCIE", "RAÇA", "SEXO", "IDADE", "SITUAÇÃO", "SETOR");
-        System.out.println("-----------------------------------------------------------------------------------------");
-
+        System.out.println("\n--- RELAÇÃO DE ANIMAIS (" + lista.size() + " total) ---");
+        System.out.printf("| %-4s | %-15s | %-12s | %-8s | %-15s |\n", "ID", "NOME", "ESPÉCIE", "IDADE", "SITUAÇÃO");
+        System.out.println("-----------------------------------------------------------------------");
         for (Animal a : lista) {
-            // Formata o ID do Setor para exibição (usando 'N/A' se for -1)
-            String setorDisplay = (a.getSetorResponsavelId() == -1) ? "N/A" : String.valueOf(a.getSetorResponsavelId());
-
-            System.out.printf("| %-4d | %-15s | %-10s | %-10s | %-5s | %-10d | %-15s | %-5s |\n",
-                    a.getId(),
-                    a.getNome(),
-                    a.getEspecie(),
-                    a.getRaca(),
-                    a.getSexo(),
-                    a.getIdade(),
-                    a.getSituacaoAtual(),
-                    setorDisplay);
+            System.out.printf("| %-4d | %-15s | %-12s | %-8d | %-15s |\n",
+                    a.getId(), a.getNome(), a.getEspecie(), a.getIdade(), a.getSituacaoAtual());
         }
-        System.out.println("-----------------------------------------------------------------------------------------");
+        System.out.println("-----------------------------------------------------------------------");
     }
 
-    /**
-     * Auxiliar: Lista todos os Setores para que o usuário possa escolher um ID.
-     */
-    private void listarSetoresDisponiveis() {
-        List<SetorResponsavel> lista = setorController.listarSetores();
-        if (lista.isEmpty()) {
-            System.out.println("Nenhum setor cadastrado.");
-            return;
-        }
-        System.out.println("\n--- SETORES DISPONÍVEIS ---");
-        System.out.printf("| %-4s | %-25s |\n", "ID", "NOME");
-        System.out.println("------------------------------");
-        for (SetorResponsavel s : lista) {
-            System.out.printf("| %-4d | %-25s |\n", s.getId(), s.getNome());
-        }
-        System.out.println("------------------------------");
-    }
-
-    /**
-     * Permite buscar um animal por ID e alterar seus dados.
-     */
     private void atualizarAnimal() {
-        System.out.print("\nDigite o ID do Animal que deseja atualizar: ");
+        System.out.print("Digite o ID do animal para atualizar: ");
         try {
             int id = scanner.nextInt();
             scanner.nextLine();
 
             Animal animalExistente = controller.buscarAnimalPorId(id);
-
             if (animalExistente == null) {
-                System.out.println("ERRO: Animal ID " + id + " não encontrado.");
+                System.out.println("\nAnimal com ID " + id + " não encontrado.");
                 return;
             }
 
-            System.out.println("\n--- ATUALIZANDO ANIMAL ID: " + id + " ---");
-            System.out.println("Deixe em branco para manter o valor atual.");
+            System.out.println("\n--- ATUALIZAR ANIMAL (ID: " + id + ") ---");
+            System.out.println("Deixe em branco/zero para manter o valor atual.");
 
+            // Nome
             System.out.print("Novo Nome (" + animalExistente.getNome() + "): ");
             String novoNome = scanner.nextLine();
-            if (!novoNome.trim().isEmpty()) animalExistente.setNome(novoNome);
+            if (!novoNome.isEmpty()) animalExistente.setNome(novoNome);
 
-            // Exemplo de como atualizar a situação (opcional)
+            // Idade
+            System.out.print("Nova Idade (" + animalExistente.getIdade() + "): ");
+            String novaIdadeStr = scanner.nextLine();
+            if (!novaIdadeStr.isEmpty()) {
+                int novaIdade = Integer.parseInt(novaIdadeStr);
+                animalExistente.setIdade(novaIdade);
+            }
+
+            // Situação Atual
+            System.out.println("\nSituação Atual: " + animalExistente.getSituacaoAtual());
             System.out.print("Deseja alterar a Situação Atual? (S/N): ");
-            if (scanner.nextLine().equalsIgnoreCase("S")) {
-                animalExistente.setSituacaoAtual(selecionarSituacao());
+            String alterarSituacao = scanner.nextLine().trim().toUpperCase();
+
+            if (alterarSituacao.equals("S")) {
+                SituacaoAtual novaSituacao = selecionarSituacao();
+                animalExistente.setSituacaoAtual(novaSituacao);
             }
 
             controller.atualizarAnimal(id, animalExistente);
-            System.out.println("SUCESSO: Animal atualizado.");
+            System.out.println("\nSUCESSO: Animal ID " + id + " atualizado.");
 
-        } catch (InputMismatchException e) {
-            System.out.println("ERRO: Entrada inválida. Digite um número inteiro para o ID.");
+        } catch (InputMismatchException | NumberFormatException e) {
+            System.out.println("\nERRO: Entrada inválida. Certifique-se de usar números para o ID e Idade.");
             scanner.nextLine();
-        } catch (Exception e) {
-            System.out.println("ERRO ao atualizar: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            System.out.println("\nERRO de Validação: Falha ao atualizar: " + e.getMessage());
         }
     }
 
-    /**
-     * Permite remover um animal por ID, exigindo confirmação.
-     */
     private void removerAnimal() {
-        System.out.print("\nDigite o ID do Animal que deseja remover: ");
+        System.out.print("Digite o ID do animal para remover: ");
         try {
             int id = scanner.nextInt();
             scanner.nextLine();
 
-            Animal animalExistente = controller.buscarAnimalPorId(id);
+            Animal a = controller.buscarAnimalPorId(id);
+            if (a != null) {
+                System.out.println("\nConfirme a exclusão do animal: " + a.getNome());
+                System.out.print("Tem certeza que deseja EXCLUIR permanentemente? (S/N): ");
+                String confirmacao = scanner.nextLine().trim().toUpperCase();
 
-            if (animalExistente == null) {
-                System.out.println("ERRO: Animal ID " + id + " não encontrado.");
-                return;
-            }
-
-            System.out.print("Tem certeza que deseja remover o Animal " + animalExistente.getNome() + " (S/N)? ");
-            String confirmacao = scanner.nextLine();
-
-            if (confirmacao.equalsIgnoreCase("S")) {
-                controller.removerAnimal(id);
-                System.out.println("SUCESSO: Animal removido.");
+                if (confirmacao.equals("S")) {
+                    controller.removerAnimal(id);
+                } else {
+                    System.out.println("\nExclusão cancelada pelo usuário.");
+                }
             } else {
-                System.out.println("Operação cancelada.");
+                System.out.println("\nAnimal com ID " + id + " não encontrado.");
             }
-
         } catch (InputMismatchException e) {
-            System.out.println("ERRO: Entrada inválida. Digite um número inteiro para o ID.");
+            System.out.println("\nERRO: Entrada inválida. O ID deve ser um número inteiro.");
             scanner.nextLine();
-        } catch (Exception e) {
-            System.out.println("ERRO ao remover: " + e.getMessage());
         }
     }
 }

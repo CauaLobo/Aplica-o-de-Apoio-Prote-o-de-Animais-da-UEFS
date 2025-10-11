@@ -1,10 +1,8 @@
 package view;
 
 import controller.TutorController;
-import controller.SetorResponsavelController;
 import model.Tutor;
 import model.Endereco;
-import model.SetorResponsavel;
 import java.util.Scanner;
 import java.util.List;
 import java.util.InputMismatchException;
@@ -15,12 +13,10 @@ import java.util.InputMismatchException;
 public class TutorView {
 
     private final TutorController controller;
-    private final SetorResponsavelController setorController;
     private final Scanner scanner;
 
-    public TutorView(TutorController controller, SetorResponsavelController setorController, Scanner scanner) {
+    public TutorView(TutorController controller, Scanner scanner) {
         this.controller = controller;
-        this.setorController = setorController;
         this.scanner = scanner;
     }
 
@@ -37,8 +33,7 @@ public class TutorView {
 
             try {
                 opcao = scanner.nextInt();
-                scanner.nextLine(); // CRÍTICO: Limpa a quebra de linha após o int
-
+                scanner.nextLine();
                 switch (opcao) {
                     case 1: cadastrarTutor(); break;
                     case 2: listarTutores(controller.listarTutores()); break;
@@ -49,7 +44,7 @@ public class TutorView {
                 }
             } catch (InputMismatchException e) {
                 System.out.println("\nERRO: Entrada inválida. Digite apenas o número da opção.");
-                scanner.nextLine(); // CRÍTICO: Limpa o buffer após o erro
+                scanner.nextLine();
                 opcao = -1;
             }
         } while (opcao != 0);
@@ -82,9 +77,7 @@ public class TutorView {
 
             Endereco endereco = new Endereco(rua, bairro, cep, cidade, estado);
 
-            int setorId = menuColetaSetor();
-
-            Tutor novoTutor = new Tutor(0, nome, endereco, telefone, email, setorId);
+            Tutor novoTutor = new Tutor(0, nome, endereco, telefone, email);
             controller.adicionarTutor(novoTutor);
 
         } catch (IllegalArgumentException e) {
@@ -94,201 +87,97 @@ public class TutorView {
         }
     }
 
-    // --- LÓGICA DE VINCULAÇÃO CLARA ---
-    private int menuColetaSetor() {
-        int opcao;
-
-        do {
-            System.out.println("\n--- VINCULAR SETOR RESPONSÁVEL ---");
-            System.out.println("1. Vincular a um Setor Existente (Buscar por ID)");
-            System.out.println("2. Cadastrar Novo Setor (Rápido)");
-            System.out.println("3. Listar Setores Disponíveis");
-            System.out.println("0. NÃO VINCULAR (Deixar em aberto)");
-            System.out.print(">>> Escolha uma opção: ");
-
-            try {
-                opcao = scanner.nextInt();
-                scanner.nextLine();
-            } catch (InputMismatchException e) {
-                System.out.println("ERRO: Entrada inválida. Digite apenas o número da opção.");
-                scanner.nextLine();
-                opcao = -1;
-                continue;
-            }
-
-            switch (opcao) {
-                case 1:
-                    int idExistente = vincularSetorExistente();
-                    if (idExistente > 0) return idExistente;
-                    break;
-                case 2:
-                    int idNovo = cadastrarSetorRapidoInterno();
-                    if (idNovo > 0) return idNovo;
-                    break;
-                case 3:
-                    listarSetoresDisponiveis();
-                    break;
-                case 0:
-                    System.out.println("Vínculo de Setor ignorado. Continua sem Setor Responsável.");
-                    return -1; // Retorna -1 para 'Não Vinculado'
-                default:
-                    System.out.println("Opção inválida. Tente novamente.");
-            }
-        } while (true);
-    }
-
-    private int vincularSetorExistente() {
-        System.out.print("Digite o ID do Setor para vincular: ");
-        try {
-            int id = scanner.nextInt();
-            scanner.nextLine();
-            SetorResponsavel setor = setorController.buscarSetorPorId(id);
-
-            if (setor != null) {
-                System.out.println("SUCESSO: Vinculado ao Setor ID " + id + " (" + setor.getNome() + ").");
-                return id;
-            } else {
-                System.out.println("ERRO: Setor ID " + id + " não encontrado. Tente novamente.");
-                return -1;
-            }
-        } catch (InputMismatchException e) {
-            System.out.println("ERRO: ID inválido. Digite um número inteiro.");
-            scanner.nextLine();
-            return -1;
-        }
-    }
-
-    private int cadastrarSetorRapidoInterno() {
-        System.out.println("\n--- CADASTRO RÁPIDO DE NOVO SETOR ---");
-        System.out.print("Nome do Novo Setor: ");
-        String nome = scanner.nextLine();
-
-        System.out.print("Localização/Endereço: ");
-        String endereco = scanner.nextLine();
-
-        try {
-            // O SetorResponsavelController PRECISA ter o método cadastrarSetorRapido(String, String)
-            int novoId = setorController.cadastrarSetorRapido(nome, endereco);
-            System.out.println("SUCESSO: Setor '" + nome + "' cadastrado com ID: " + novoId);
-            return novoId;
-        } catch (Exception e) {
-            System.out.println("ERRO: Falha ao cadastrar o Setor. " + e.getMessage());
-            return -1;
-        }
-    }
-
-    // --- MÉTODOS AUXILIARES E CRUD COMPLETOS ---
-
-    /**
-     * @Override: Exibe a lista de tutores de forma formatada.
-     */
     private void listarTutores(List<Tutor> lista) {
         if (lista.isEmpty()) {
-            System.out.println("\nNenhuma pessoa tutora cadastrada no momento.");
+            System.out.println("\nNenhum tutor cadastrado.");
             return;
         }
-
         System.out.println("\n--- RELAÇÃO DE PESSOAS TUTORAS ---");
-        System.out.printf("| %-4s | %-25s | %-15s | %-5s |\n", "ID", "NOME", "TELEFONE", "SETOR");
-        System.out.println("----------------------------------------------------------");
-
+        System.out.printf("| %-4s | %-20s | %-15s | %-30s |\n", "ID", "NOME", "TELEFONE", "E-MAIL");
+        System.out.println("------------------------------------------------------------------");
         for (Tutor t : lista) {
-            String setorDisplay = (t.getSetorResponsavelId() == -1) ? "N/A" : String.valueOf(t.getSetorResponsavelId());
-
-            System.out.printf("| %-4d | %-25s | %-15s | %-5s |\n",
-                    t.getId(),
-                    t.getNome(),
-                    t.getTelefone(),
-                    setorDisplay);
+            System.out.printf("| %-4d | %-20s | %-15s | %-30s |\n",
+                    t.getId(), t.getNome(), t.getTelefone(), t.getEmail());
         }
-        System.out.println("----------------------------------------------------------");
+        System.out.println("------------------------------------------------------------------");
     }
 
-    /**
-     * Auxiliar: Lista todos os Setores para que o usuário possa escolher um ID.
-     */
-    private void listarSetoresDisponiveis() {
-        List<SetorResponsavel> lista = setorController.listarSetores();
-        if (lista.isEmpty()) {
-            System.out.println("Nenhum setor cadastrado.");
-            return;
-        }
-        System.out.println("\n--- SETORES DISPONÍVEIS ---");
-        System.out.printf("| %-4s | %-25s |\n", "ID", "NOME");
-        System.out.println("------------------------------");
-        for (SetorResponsavel s : lista) {
-            System.out.printf("| %-4d | %-25s |\n", s.getId(), s.getNome());
-        }
-        System.out.println("------------------------------");
-    }
-
-    /**
-     * Permite buscar um tutor por ID e alterar seus dados.
-     */
     private void atualizarTutor() {
-        System.out.print("\nDigite o ID do Tutor que deseja atualizar: ");
+        System.out.print("Digite o ID do tutor que deseja atualizar: ");
         try {
             int id = scanner.nextInt();
             scanner.nextLine();
 
             Tutor tutorExistente = controller.buscarTutorPorId(id);
-
             if (tutorExistente == null) {
-                System.out.println("ERRO: Tutor ID " + id + " não encontrado.");
+                System.out.println("\nTutor com ID " + id + " não encontrado.");
                 return;
             }
 
-            System.out.println("\n--- ATUALIZANDO TUTOR ID: " + id + " ---");
+            System.out.println("\n--- ATUALIZAR TUTOR (ID: " + id + ") ---");
             System.out.println("Deixe em branco para manter o valor atual.");
 
+            // 1. Atualizar Nome
             System.out.print("Novo Nome (" + tutorExistente.getNome() + "): ");
             String novoNome = scanner.nextLine();
-            if (!novoNome.trim().isEmpty()) tutorExistente.setNome(novoNome);
+            if (!novoNome.isEmpty()) tutorExistente.setNome(novoNome);
 
-            // A lógica de atualização de endereço e outros campos seria similar
+            // 2. Atualizar Telefone
+            System.out.print("Novo Telefone (" + tutorExistente.getTelefone() + "): ");
+            String novoTelefone = scanner.nextLine();
+            if (!novoTelefone.isEmpty()) tutorExistente.setTelefone(novoTelefone);
+
+            // 3. Atualizar E-mail
+            System.out.print("Novo E-mail (" + tutorExistente.getEmail() + "): ");
+            String novoEmail = scanner.nextLine();
+            if (!novoEmail.isEmpty()) tutorExistente.setEmail(novoEmail);
+
+            // 4. Atualizar Endereço
+            Endereco enderecoExistente = tutorExistente.getEndereco();
+            System.out.println("\n--- ATUALIZAR ENDEREÇO ---");
+
+            System.out.print("Nova Rua (" + enderecoExistente.getRua() + "): ");
+            String novaRua = scanner.nextLine();
+            if (!novaRua.isEmpty()) enderecoExistente.setRua(novaRua);
+
+            System.out.print("Novo Bairro (" + enderecoExistente.getBairro() + "): ");
+            String novoBairro = scanner.nextLine();
+            if (!novoBairro.isEmpty()) enderecoExistente.setBairro(novoBairro);
 
             controller.atualizarTutor(id, tutorExistente);
-            System.out.println("SUCESSO: Tutor atualizado.");
+            System.out.println("\nSUCESSO: Tutor ID " + id + " atualizado.");
 
         } catch (InputMismatchException e) {
-            System.out.println("ERRO: Entrada inválida. Digite um número inteiro para o ID.");
+            System.out.println("\nERRO: Entrada inválida. O ID deve ser um número inteiro.");
             scanner.nextLine();
-        } catch (Exception e) {
-            System.out.println("ERRO ao atualizar: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            System.out.println("\nERRO de Validação: Falha ao atualizar: " + e.getMessage());
         }
     }
 
-    /**
-     * Permite remover um tutor por ID, com confirmação.
-     */
     private void removerTutor() {
-        System.out.print("\nDigite o ID do Tutor que deseja remover: ");
+        System.out.print("Digite o ID do tutor para remover: ");
         try {
             int id = scanner.nextInt();
             scanner.nextLine();
 
-            Tutor tutorExistente = controller.buscarTutorPorId(id);
+            Tutor t = controller.buscarTutorPorId(id);
+            if (t != null) {
+                System.out.println("\nConfirme a exclusão do tutor: " + t.getNome());
+                System.out.print("Tem certeza que deseja EXCLUIR permanentemente? (S/N): ");
+                String confirmacao = scanner.nextLine().trim().toUpperCase();
 
-            if (tutorExistente == null) {
-                System.out.println("ERRO: Tutor ID " + id + " não encontrado.");
-                return;
-            }
-
-            System.out.print("Tem certeza que deseja remover o Tutor " + tutorExistente.getNome() + " (S/N)? ");
-            String confirmacao = scanner.nextLine();
-
-            if (confirmacao.equalsIgnoreCase("S")) {
-                controller.removerTutor(id);
-                System.out.println("SUCESSO: Tutor removido.");
+                if (confirmacao.equals("S")) {
+                    controller.removerTutor(id);
+                } else {
+                    System.out.println("\nExclusão cancelada pelo usuário.");
+                }
             } else {
-                System.out.println("Operação cancelada.");
+                System.out.println("\nTutor com ID " + id + " não encontrado.");
             }
-
         } catch (InputMismatchException e) {
-            System.out.println("ERRO: Entrada inválida. Digite um número inteiro para o ID.");
+            System.out.println("\nERRO: Entrada inválida. O ID deve ser um número inteiro.");
             scanner.nextLine();
-        } catch (Exception e) {
-            System.out.println("ERRO ao remover: " + e.getMessage());
         }
     }
 }
