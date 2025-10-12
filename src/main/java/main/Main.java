@@ -1,9 +1,12 @@
 package main;
 
 import controller.AnimalController;
+import controller.RelatorioController;
 import controller.SetorResponsavelController;
 import controller.TutorController;
+import util.JsonPersistence;
 import view.AnimalView;
+import view.RelatorioView;
 import view.SetorResponsavelView;
 import view.TutorView;
 
@@ -16,24 +19,26 @@ import java.util.Scanner;
  */
 public class Main {
 
-    public static void main(String[] args) {
+    private static final String DATA_FILE = "dados_programa.json";
 
-        // --- 1. CONFIGURAÇÃO INICIAL ---
+    public static void main(String[] args) {
+        System.out.println("Carregando dados do arquivo '" + DATA_FILE + "'...");
+        JsonPersistence.DataContainer data = JsonPersistence.loadData(DATA_FILE);
+
+        // --- 2. CONFIGURAÇÃO INICIAL ---
         Scanner scanner = new Scanner(System.in);
 
-        // Inicializa Controllers
-        AnimalController animalController = new AnimalController();
-        SetorResponsavelController setorController = new SetorResponsavelController();
-        TutorController tutorController = new TutorController();
+        // Inicializa Controllers com os dados carregados
+        TutorController tutorController = new TutorController(data.tutores);
+        SetorResponsavelController setorController = new SetorResponsavelController(data.setores);
+        AnimalController animalController = new AnimalController(data.animais);
+        RelatorioController relatorioController = new RelatorioController(animalController, setorController);
 
-        // Inicializa Views. ATENÇÃO: SetorResponsavelView está sendo chamada com o mínimo de argumentos.
+        // Inicializa Views
         AnimalView animalView = new AnimalView(animalController, setorController, scanner);
-
         TutorView tutorView = new TutorView(tutorController, scanner);
-
-        // LINHA CORRIGIDA PARA EVITAR O ERRO DE CONSTRUTOR:
         SetorResponsavelView setorView = new SetorResponsavelView(setorController, tutorController, scanner);
-
+        RelatorioView relatorioView = new RelatorioView(relatorioController, scanner);
 
         // --- INÍCIO DA APLICAÇÃO ---
         System.out.println("\n=================================================");
@@ -54,7 +59,7 @@ public class Main {
                     case 2: setorView.exibirMenu(); break;
                     case 3: tutorView.exibirMenu(); break;
                     case 4:
-                        System.out.println("\nFuncionalidade de Relatórios pendente de implementação.");
+                        relatorioView.exibirMenu();
                         break;
                     case 0:
                         break;
@@ -70,7 +75,18 @@ public class Main {
             }
         } while (opcao != 0);
 
+        // --- SALVAR DADOS ANTES DE SAIR ---
+        JsonPersistence.saveData(
+                DATA_FILE,
+                tutorController.listarTutores(),
+                setorController.listarSetores(),
+                animalController.listarAnimais()
+        );
+
+
         System.out.println("\n-------------------------------------------------");
+        System.out.println("Dados salvos em '" + DATA_FILE + "' com sucesso!");
+
         System.out.println("Sistema encerrado. Até mais!");
         System.out.println("-------------------------------------------------");
         scanner.close();

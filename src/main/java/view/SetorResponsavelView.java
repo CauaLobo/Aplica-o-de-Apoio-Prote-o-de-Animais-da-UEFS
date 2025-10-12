@@ -9,9 +9,6 @@ import java.util.Scanner;
 import java.util.List;
 import java.util.InputMismatchException;
 
-/**
- * Menu de Linha de Comando (CLI) para gerenciamento da entidade SetorResponsavel.
- */
 public class SetorResponsavelView {
 
     private final SetorResponsavelController controller;
@@ -24,6 +21,7 @@ public class SetorResponsavelView {
         this.scanner = scanner;
     }
 
+    // ... outros métodos (exibirMenu, cadastrarSetor, etc.) ...
     public void exibirMenu() {
         int opcao;
         do {
@@ -58,7 +56,6 @@ public class SetorResponsavelView {
 
         List<Tutor> tutores = tutorController.listarTutores();
 
-        // Verifica se há tutores cadastrados antes de permitir o cadastro de setores
         if (tutores.isEmpty()) {
             System.out.println("\nERRO: É necessário cadastrar pelo menos um tutor antes de cadastrar setores responsáveis.");
             return;
@@ -89,14 +86,15 @@ public class SetorResponsavelView {
 
         System.out.println("\n--- RELAÇÃO DE SETORES RESPONSÁVEIS ---");
         System.out.printf("| %-4s | %-25s | %-25s | %-15s |\n", "ID", "NOME", "LOCALIZAÇÃO", "TUTOR RESPONSÁVEL");
-        System.out.println("----------------------------------------------------------");
+        System.out.println("----------------------------------------------------------------------");
         for (SetorResponsavel s : lista) {
+            String nomeTutor = (s.getTutorResponsavel() != null) ? s.getTutorResponsavel().getNome() : "N/A";
             System.out.printf("| %-4d | %-25s | %-25s | %-15s |\n",
-                    s.getId(), s.getNome(), s.getEndereco(), s.getTutorResponsavel().getNome()
+                    s.getId(), s.getNome(), s.getEndereco(), nomeTutor
             );
         }
 
-        System.out.println("----------------------------------------------------------");
+        System.out.println("----------------------------------------------------------------------");
     }
 
     private void atualizarSetor() {
@@ -178,12 +176,11 @@ public class SetorResponsavelView {
                 Tutor tutorSelecionado = tutorController.buscarTutorPorId(tutorId);
                 if (tutorSelecionado != null) {
                     System.out.println("Tutor '" + tutorSelecionado.getNome() + "' vinculado ao setor.");
-                    return null;
+                    return tutorSelecionado; // CORREÇÃO: Retorna o tutor encontrado
                 } else {
                     System.out.println("Tutor com ID " + tutorId + " não encontrado. Tente novamente.");
                 }
 
-                return tutorSelecionado;
             } catch (InputMismatchException e) {
                 System.out.println("ERRO: Entrada inválida. O ID deve ser um número inteiro.");
                 scanner.nextLine();

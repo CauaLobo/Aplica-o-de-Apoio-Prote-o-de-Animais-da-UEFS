@@ -13,6 +13,11 @@ public class SetorResponsavelController {
         this.setores = new ArrayList<>();
     }
 
+    // Construtor que aceita a lista carregada
+    public SetorResponsavelController(List<SetorResponsavel> setores) {
+        this.setores = setores;
+    }
+
     // --- MÉTODOS DE SERVIÇO ---
     public void adicionarSetor(SetorResponsavel setor) {
         setores.add(setor);

@@ -137,10 +137,10 @@ public class AnimalView {
             return;
         }
         System.out.println("\n--- RELAÇÃO DE ANIMAIS (" + lista.size() + " total) ---");
-        System.out.printf("| %-4s | %-15s | %-12s | %-8s | %-15s | %-10s |\n", "ID", "NOME", "ESPÉCIE", "IDADE", "SITUAÇÃO", "SETOR");
+        System.out.printf("| %-4s | %-15s | %-12s | %-8s | %-25s | %-10s |\n", "ID", "NOME", "ESPÉCIE", "IDADE", "SITUAÇÃO", "SETOR");
         System.out.println("-----------------------------------------------------------------------");
         for (Animal a : lista) {
-            System.out.printf("| %-4s | %-15s | %-12s | %-8d | %-15s | %-10s |\n",
+            System.out.printf("| %-4s | %-15s | %-12s | %-8d | %-25s | %-10s |\n",
                     a.getId(), a.getNome(), a.getEspecie(), a.getIdade(), a.getSituacaoAtual(), a.getSetorResponsavel().getNome()
             );
         }

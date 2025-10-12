@@ -4,17 +4,43 @@ import model.Tutor;
 import java.util.List;
 import java.util.ArrayList;
 
+/**
+ * Classe controladora para gerenciar operações relacionadas a Tutores.
+ * Permite adicionar, atualizar, listar, buscar e remover tutores.
+ */
 public class TutorController {
-    public List<Tutor> tutor = new ArrayList<>();
+    private final List<Tutor> tutores;
 
-    // CREATE - Cadastrar tutor
+    /**
+     * Construtor padrão. Inicializa uma nova lista de tutores vazia.
+     */
+    public TutorController() {
+        this.tutores = new ArrayList<>();
+    }
+
+    /**
+     * Construtor que inicializa o controlador com uma lista de tutores pré-existente.
+     * @param tutores A lista de tutores para ser gerenciada.
+     */
+    public TutorController(List<Tutor> tutores) {
+        this.tutores = tutores;
+    }
+
+    /**
+     * Adiciona um novo tutor à lista.
+     * @param novoTutor O objeto Tutor a ser adicionado.
+     */
     public void adicionarTutor(Tutor novoTutor) {
-        tutor.add(novoTutor);
+        tutores.add(novoTutor);
         System.out.println("Tutor cadastrado com sucesso: " + novoTutor.getNome());
     }
-    // UPDATE - Atualizar tutor pelo ID
+    /**
+     * Atualiza os dados de um tutor existente com base no seu ID.
+     * @param id O ID do tutor a ser atualizado.
+     * @param novoTutor O objeto Tutor com os novos dados.
+     */
     public void atualizarTutor(int id, Tutor novoTutor) {
-        for (Tutor t : tutor) {
+        for (Tutor t : tutores) {
             if (t.getId() == id) {
                 t.atualizarTutor(novoTutor);
                 System.out.println("Tutor com ID " + id + " atualizado com sucesso!");
@@ -23,30 +49,38 @@ public class TutorController {
         }
         System.out.println("Tutor com ID " + id + " não encontrado.");
     }
-    // READ - Listar todos os tutores
+    /**
+     * Retorna a lista de todos os tutores cadastrados.
+     * @return Uma lista de objetos Tutor.
+     */
     public List<Tutor> listarTutores() {
-        return tutor;
+        return tutores;
     }
-    // READ - Buscar tutor por ID
+    /**
+     * Busca um tutor na lista pelo seu ID.
+     * @param id O ID do tutor a ser buscado.
+     * @return O objeto Tutor encontrado ou null se não for encontrado.
+     */
     public Tutor buscarTutorPorId(int id) {
-        for (Tutor t : tutor) {
+        for (Tutor t : tutores) {
             if (t.getId() == id) {
                 return t;
             }
         }
-        System.out.println("Tutor com ID " + id + " não encontrado.");
+        // System.out.println("Tutor com ID " + id + " não encontrado."); // Removido para não poluir
         return null;
     }
-    // DELETE - Remover tutor pelo ID
+    /**
+     * Remove um tutor da lista com base no seu ID.
+     * @param id O ID do tutor a ser removido.
+     */
     public void removerTutor(int id){
-        for (Tutor t: tutor){
-            if (t.getId() == id){
-                tutor.remove(t);
-                System.out.println("Tutor com ID " + id + " removido com sucesso!");
-                return;
-            }
+        Tutor tutorParaRemover = buscarTutorPorId(id);
+        if (tutorParaRemover != null) {
+            tutores.remove(tutorParaRemover);
+            System.out.println("Tutor com ID " + id + " removido com sucesso!");
+        } else {
+            System.out.println("Tutor com ID " + id + " não encontrado.");
         }
-        System.out.println("Tutor com ID " + id + " não encontrado.");
     }
-
 }

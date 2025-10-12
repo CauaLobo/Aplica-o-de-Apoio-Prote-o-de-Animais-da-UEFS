@@ -8,42 +8,45 @@ public class SetorResponsavel {
     private String endereco;
     private Tutor tutorResponsavel;
 
+    // Construtor para uso na carga de dados
+    public SetorResponsavel() {}
+
     public SetorResponsavel(String nome,String endereco, Tutor tutorResponsavel){
-        this.id = contadorIds;
+        this.id = contadorIds++;
         this.nome = nome;
         this.endereco = endereco;
         this.tutorResponsavel = tutorResponsavel;
-        contadorIds++;
     }
 
-    public int getId() {
-        return id;
+    // Adicione este método estático
+    public static void setContadorIds(int valor) {
+        contadorIds = valor;
     }
 
-    public String getNome(){
-        return nome;
-    }
-    public void setNome(String nome){
-        this.nome = nome;
-    }
-    public String getEndereco(){
-        return endereco;
-    }
-    public void setEndereco(String endereco){
-        this.endereco = endereco;
+    // Adicione este setter
+    public void setId(int id) {
+        this.id = id;
     }
 
+    // ... resto da classe ...
+    public int getId() { return id; }
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
+    public String getEndereco() { return endereco; }
+    public void setEndereco(String endereco) { this.endereco = endereco; }
+    public Tutor getTutorResponsavel() { return tutorResponsavel; }
+    public void setTutorResponsavel(Tutor tutorResponsavel) { this.tutorResponsavel = tutorResponsavel; }
     public void atualizarSetor(SetorResponsavel novoSetor){
         this.nome = novoSetor.getNome();
         this.endereco = novoSetor.getEndereco();
         this.tutorResponsavel = novoSetor.getTutorResponsavel();
     }
-
-    public Tutor getTutorResponsavel() {
-        return tutorResponsavel;
-    }
-
-    public void setTutorResponsavel(Tutor tutorResponsavel) {
-        this.tutorResponsavel = tutorResponsavel;
+    public String toJson() {
+        return String.format("    {\n" +
+                "      \"id\": %d,\n" +
+                "      \"nome\": \"%s\",\n" +
+                "      \"endereco\": \"%s\",\n" +
+                "      \"tutorResponsavelId\": %d\n" +
+                "    }", id, nome, endereco, tutorResponsavel != null ? tutorResponsavel.getId() : 0);
     }
 }

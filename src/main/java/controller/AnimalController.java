@@ -8,6 +8,10 @@ public class AnimalController {
     // Lista simulando um banco de dados em memória
     private List<Animal> animais = new ArrayList<>();
 
+    public AnimalController(List<Animal> animais) {
+        this.animais = animais;
+    }
+
     // CREATE - Cadastrar animal
     public void adicionarAnimal(Animal animal) {
         animais.add(animal);
