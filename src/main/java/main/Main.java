@@ -15,12 +15,17 @@ import java.util.Scanner;
 
 /**
  * Classe principal que inicia a Aplicação de Apoio à Proteção de Animais da UEFS.
- * Contém o menu de navegação principal, com tratamento de erros de entrada.
+ * Responsável por carregar os dados, inicializar controllers e views, e exibir o menu principal.
  */
 public class Main {
 
+    /** Nome do arquivo de dados utilizado para persistência. */
     private static final String DATA_FILE = "dados_programa.json";
 
+    /**
+     * Método principal que executa a aplicação.
+     * @param args Argumentos de linha de comando (não utilizados)
+     */
     public static void main(String[] args) {
         System.out.println("Carregando dados do arquivo '" + DATA_FILE + "'...");
         JsonPersistence.DataContainer data = JsonPersistence.loadData(DATA_FILE);

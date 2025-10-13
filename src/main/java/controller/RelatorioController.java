@@ -14,21 +14,46 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Controlador responsável pela geração de relatórios relacionados aos animais e setores.
+ * Permite gerar relatórios completos, por setor responsável e por espécie, exportando para arquivo.
+ */
 public class RelatorioController {
 
+    /**
+     * Controlador de animais utilizado para obter dados dos animais.
+     */
     private final AnimalController animalController;
+    /**
+     * Controlador de setores utilizado para obter dados dos setores responsáveis.
+     */
     private final SetorResponsavelController setorController;
 
+    /**
+     * Construtor do controlador de relatórios.
+     * @param animalController Controlador de animais
+     * @param setorController Controlador de setores responsáveis
+     */
     public RelatorioController(AnimalController animalController, SetorResponsavelController setorController) {
         this.animalController = animalController;
         this.setorController = setorController;
     }
 
-    // Método auxiliar para criar uma string repetida, compatível com versões antigas do Java.
+    /**
+     * Cria uma string repetida de um caractere, compatível com versões antigas do Java.
+     * @param caractere Caractere a ser repetido
+     * @param vezes Número de repetições
+     * @return String formada pelo caractere repetido
+     */
     private String repetirCaractere(char caractere, int vezes) {
         return String.join("", Collections.nCopies(vezes, String.valueOf(caractere)));
     }
 
+    /**
+     * Gera um relatório completo de todos os animais cadastrados e salva em arquivo.
+     * @param caminhoArquivo Caminho do arquivo para salvar o relatório
+     * @throws IOException Caso ocorra erro ao salvar o arquivo
+     */
     public void gerarRelatorioCompletoAnimais(String caminhoArquivo) throws IOException {
         List<Animal> animais = animalController.listarAnimais();
         StringBuilder relatorio = new StringBuilder();
@@ -51,6 +76,11 @@ public class RelatorioController {
         salvarRelatorio(caminhoArquivo, relatorio.toString());
     }
 
+    /**
+     * Gera um relatório agrupando os animais por setor responsável e salva em arquivo.
+     * @param caminhoArquivo Caminho do arquivo para salvar o relatório
+     * @throws IOException Caso ocorra erro ao salvar o arquivo
+     */
     public void gerarRelatorioAnimaisPorSetor(String caminhoArquivo) throws IOException {
         List<Animal> animais = animalController.listarAnimais();
         List<SetorResponsavel> setores = setorController.listarSetores();
@@ -88,6 +118,11 @@ public class RelatorioController {
         salvarRelatorio(caminhoArquivo, relatorio.toString());
     }
 
+    /**
+     * Gera um relatório agrupando os animais por espécie e salva em arquivo.
+     * @param caminhoArquivo Caminho do arquivo para salvar o relatório
+     * @throws IOException Caso ocorra erro ao salvar o arquivo
+     */
     public void gerarRelatorioAnimaisPorEspecie(String caminhoArquivo) throws IOException {
         List<Animal> animais = animalController.listarAnimais();
         StringBuilder relatorio = new StringBuilder();
@@ -124,6 +159,11 @@ public class RelatorioController {
         salvarRelatorio(caminhoArquivo, relatorio.toString());
     }
 
+    /**
+     * Gera o cabeçalho do relatório.
+     * @param sb StringBuilder do relatório
+     * @param titulo Título do relatório
+     */
     private void gerarCabecalho(StringBuilder sb, String titulo) {
         sb.append("********************************************************************************\n");
         sb.append("        Aplicação de Apoio à Proteção de Animais da UEFS\n");
@@ -132,6 +172,10 @@ public class RelatorioController {
         sb.append("## ").append(titulo).append(" ##\n\n");
     }
 
+    /**
+     * Gera o rodapé do relatório, incluindo data e hora de geração.
+     * @param sb StringBuilder do relatório
+     */
     private void gerarRodape(StringBuilder sb) {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
         sb.append("\n\n---\n");
@@ -139,6 +183,12 @@ public class RelatorioController {
         sb.append("Fim do relatório.\n");
     }
 
+    /**
+     * Salva o conteúdo do relatório em um arquivo.
+     * @param caminhoArquivo Caminho do arquivo
+     * @param conteudo Conteúdo a ser salvo
+     * @throws IOException Caso ocorra erro ao salvar o arquivo
+     */
     private void salvarRelatorio(String caminhoArquivo, String conteudo) throws IOException {
         Files.write(Paths.get(caminhoArquivo), conteudo.getBytes());
     }

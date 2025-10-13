@@ -6,16 +6,30 @@ import java.io.IOException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+/**
+ * Menu de Linha de Comando (CLI) para emissão de relatórios do sistema.
+ * Permite gerar relatórios completos, por setor responsável e por espécie.
+ */
 public class RelatorioView {
 
+    /** Controller de relatórios utilizado pela view. */
     private final RelatorioController controller;
+    /** Scanner para entrada de dados do usuário. */
     private final Scanner scanner;
 
+    /**
+     * Construtor da view de relatórios.
+     * @param controller Controller de relatórios
+     * @param scanner Scanner para entrada de dados
+     */
     public RelatorioView(RelatorioController controller, Scanner scanner) {
         this.controller = controller;
         this.scanner = scanner;
     }
 
+    /**
+     * Exibe o menu de opções para emissão de relatórios.
+     */
     public void exibirMenu() {
         int opcao = -1;
         do {

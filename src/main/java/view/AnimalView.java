@@ -12,19 +12,32 @@ import java.util.Scanner;
 
 /**
  * Menu de Linha de Comando (CLI) para gerenciamento da entidade Animal.
+ * Permite cadastrar, listar, atualizar e remover animais do sistema.
  */
 public class AnimalView {
 
+    /** Controller de animais utilizado pela view. */
     private final AnimalController controller;
+    /** Controller de setores responsáveis utilizado pela view. */
     private final SetorResponsavelController setorResponsavelController;
+    /** Scanner para entrada de dados do usuário. */
     private final Scanner scanner;
 
+    /**
+     * Construtor da view de animais.
+     * @param controller Controller de animais
+     * @param setorResponsavelController Controller de setores responsáveis
+     * @param scanner Scanner para entrada de dados
+     */
     public AnimalView(AnimalController controller, SetorResponsavelController setorResponsavelController, Scanner scanner) {
         this.controller = controller;
         this.setorResponsavelController = setorResponsavelController;
         this.scanner = scanner;
     }
 
+    /**
+     * Exibe o menu de opções para gerenciamento de animais.
+     */
     public void exibirMenu() {
         int opcao;
         do {

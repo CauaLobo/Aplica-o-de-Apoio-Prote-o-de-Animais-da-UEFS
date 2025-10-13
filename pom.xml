@@ -6,4 +6,14 @@
   <version>1.0-SNAPSHOT</version>
   <name>Archetype - Protecao_Animais_UEFS</name>
   <url>http://maven.apache.org</url>
+
+  <dependencies>
+    <!-- Dependência para testes unitários com JUnit 5 -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>5.10.2</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 </project>

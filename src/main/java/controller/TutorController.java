@@ -5,10 +5,13 @@ import java.util.List;
 import java.util.ArrayList;
 
 /**
- * Classe controladora para gerenciar operações relacionadas a Tutores.
- * Permite adicionar, atualizar, listar, buscar e remover tutores.
+ * Controlador responsável pelas operações de cadastro, atualização, listagem, busca e remoção de tutores.
+ * Gerencia uma lista de tutores em memória, simulando um repositório.
  */
 public class TutorController {
+    /**
+     * Lista de tutores simulando um repositório em memória.
+     */
     private final List<Tutor> tutores;
 
     /**
@@ -20,7 +23,7 @@ public class TutorController {
 
     /**
      * Construtor que inicializa o controlador com uma lista de tutores pré-existente.
-     * @param tutores A lista de tutores para ser gerenciada.
+     * @param tutores Lista de tutores a ser gerenciada.
      */
     public TutorController(List<Tutor> tutores) {
         this.tutores = tutores;
@@ -34,6 +37,7 @@ public class TutorController {
         tutores.add(novoTutor);
         System.out.println("Tutor cadastrado com sucesso: " + novoTutor.getNome());
     }
+
     /**
      * Atualiza os dados de um tutor existente com base no seu ID.
      * @param id O ID do tutor a ser atualizado.
@@ -49,13 +53,15 @@ public class TutorController {
         }
         System.out.println("Tutor com ID " + id + " não encontrado.");
     }
+
     /**
      * Retorna a lista de todos os tutores cadastrados.
-     * @return Uma lista de objetos Tutor.
+     * @return Lista de objetos Tutor.
      */
     public List<Tutor> listarTutores() {
         return tutores;
     }
+
     /**
      * Busca um tutor na lista pelo seu ID.
      * @param id O ID do tutor a ser buscado.
@@ -70,6 +76,7 @@ public class TutorController {
         // System.out.println("Tutor com ID " + id + " não encontrado."); // Removido para não poluir
         return null;
     }
+
     /**
      * Remove um tutor da lista com base no seu ID.
      * @param id O ID do tutor a ser removido.

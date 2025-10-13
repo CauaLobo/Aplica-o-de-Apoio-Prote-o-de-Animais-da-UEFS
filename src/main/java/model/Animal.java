@@ -1,20 +1,47 @@
 package model;
 
+/**
+ * Representa um animal cadastrado no sistema.
+ * Contém informações como nome, espécie, raça, idade, sexo, situação atual e setor responsável.
+ */
 public class Animal {
+    /**
+     * Contador estático para geração automática de IDs.
+     */
     private static int contadorIds = 1;
 
+    /** Identificador único do animal. */
     private int id;
+    /** Nome do animal. */
     private String nome;
+    /** Espécie do animal. */
     private Especie especie;
+    /** Raça do animal. */
     private String raca;
+    /** Idade do animal. */
     private int idade;
+    /** Sexo do animal. */
     private String sexo;
+    /** Situação atual do animal. */
     private SituacaoAtual situacaoAtual;
+    /** Setor responsável pelo animal. */
     private SetorResponsavel setorResponsavel;
 
-    // Construtor para uso na carga de dados
+    /**
+     * Construtor padrão para uso em carga de dados.
+     */
     public Animal() {}
 
+    /**
+     * Construtor completo para criação de um novo animal.
+     * @param nome Nome do animal
+     * @param especie Espécie do animal
+     * @param raca Raça do animal
+     * @param idade Idade do animal
+     * @param sexo Sexo do animal
+     * @param situacaoAtual Situação atual do animal
+     * @param setorResponsavel Setor responsável pelo animal
+     */
     public Animal(String nome, Especie especie, String raca, int idade, String sexo, SituacaoAtual situacaoAtual, SetorResponsavel setorResponsavel) {
         this.id = contadorIds++;
         this.nome = nome;
@@ -26,17 +53,26 @@ public class Animal {
         this.setorResponsavel = setorResponsavel;
     }
 
-    // Adicione este método estático
+    /**
+     * Define o valor do contador de IDs (usado na carga de dados).
+     * @param valor Novo valor do contador
+     */
     public static void setContadorIds(int valor) {
         contadorIds = valor;
     }
 
-    // Adicione este setter
+    /**
+     * Define o ID do animal (usado na carga de dados).
+     * @param id Novo ID
+     */
     public void setId(int id) {
         this.id = id;
     }
 
-    // ... resto da classe ...
+    /**
+     * Converte os dados do animal para o formato JSON.
+     * @return String no formato JSON com os dados do animal
+     */
     public String toJson() {
         return String.format("    {\n" +
                 "      \"id\": %d,\n" +

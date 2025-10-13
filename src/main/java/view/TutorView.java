@@ -10,17 +10,28 @@ import java.util.InputMismatchException;
 
 /**
  * Menu de Linha de Comando (CLI) para gerenciamento da entidade Tutor.
+ * Permite cadastrar, listar, atualizar e remover tutores do sistema.
  */
 public class TutorView {
 
+    /** Controller de tutores utilizado pela view. */
     private final TutorController controller;
+    /** Scanner para entrada de dados do usuário. */
     private final Scanner scanner;
 
+    /**
+     * Construtor da view de tutores.
+     * @param controller Controller de tutores
+     * @param scanner Scanner para entrada de dados
+     */
     public TutorView(TutorController controller, Scanner scanner) {
         this.controller = controller;
         this.scanner = scanner;
     }
 
+    /**
+     * Exibe o menu de opções para gerenciamento de tutores.
+     */
     public void exibirMenu() {
         int opcao;
         do {

@@ -9,19 +9,34 @@ import java.util.Scanner;
 import java.util.List;
 import java.util.InputMismatchException;
 
+/**
+ * Menu de Linha de Comando (CLI) para gerenciamento da entidade Setor Responsável.
+ * Permite cadastrar, listar, atualizar e remover setores responsáveis do sistema.
+ */
 public class SetorResponsavelView {
 
+    /** Controller de setores responsáveis utilizado pela view. */
     private final SetorResponsavelController controller;
+    /** Controller de tutores utilizado pela view. */
     private final TutorController tutorController;
+    /** Scanner para entrada de dados do usuário. */
     private final Scanner scanner;
 
+    /**
+     * Construtor da view de setores responsáveis.
+     * @param controller Controller de setores responsáveis
+     * @param tutorController Controller de tutores
+     * @param scanner Scanner para entrada de dados
+     */
     public SetorResponsavelView(SetorResponsavelController controller, TutorController tutorController, Scanner scanner) {
         this.controller = controller;
         this.tutorController = tutorController;
         this.scanner = scanner;
     }
 
-    // ... outros métodos (exibirMenu, cadastrarSetor, etc.) ...
+    /**
+     * Exibe o menu de opções para gerenciamento de setores responsáveis.
+     */
     public void exibirMenu() {
         int opcao;
         do {

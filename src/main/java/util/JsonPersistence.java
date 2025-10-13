@@ -13,14 +13,30 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+/**
+ * Classe utilitária para persistência de dados em formato JSON.
+ * Responsável por carregar e salvar listas de Tutores, Setores Responsáveis e Animais
+ * a partir de um arquivo JSON, utilizando parsing manual sem bibliotecas externas.
+ */
 public class JsonPersistence {
 
-    // Classe interna para conter as listas carregadas
+    /**
+     * Classe interna para conter as listas carregadas de tutores, setores e animais.
+     */
     public static class DataContainer {
+        /** Lista de tutores carregados do JSON */
         public final List<Tutor> tutores;
+        /** Lista de setores responsáveis carregados do JSON */
         public final List<SetorResponsavel> setores;
+        /** Lista de animais carregados do JSON */
         public final List<Animal> animais;
 
+        /**
+         * Construtor do DataContainer.
+         * @param tutores Lista de tutores
+         * @param setores Lista de setores responsáveis
+         * @param animais Lista de animais
+         */
         public DataContainer(List<Tutor> tutores, List<SetorResponsavel> setores, List<Animal> animais) {
             this.tutores = tutores;
             this.setores = setores;
@@ -28,6 +44,11 @@ public class JsonPersistence {
         }
     }
 
+    /**
+     * Carrega os dados do arquivo JSON informado, populando listas de tutores, setores e animais.
+     * @param filename Caminho do arquivo JSON
+     * @return DataContainer contendo as listas carregadas
+     */
     public static DataContainer loadData(String filename) {
         List<Tutor> tutores = new ArrayList<>();
         List<SetorResponsavel> setores = new ArrayList<>();
@@ -126,6 +147,12 @@ public class JsonPersistence {
         return new DataContainer(tutores, setores, animais);
     }
 
+    /**
+     * Realiza o parsing de um array JSON identificado pelo nome, retornando uma lista de mapas chave-valor.
+     * @param jsonContent Conteúdo JSON completo
+     * @param arrayName Nome do array a ser extraído
+     * @return Lista de mapas representando os objetos do array
+     */
     private static List<Map<String, String>> parseJsonArray(String jsonContent, String arrayName) {
         List<Map<String, String>> list = new ArrayList<>();
         Pattern p = Pattern.compile("\"" + arrayName + "\":\\s*\\[(.*?)\\]", Pattern.DOTALL);
@@ -143,6 +170,11 @@ public class JsonPersistence {
         return list;
     }
 
+    /**
+     * Realiza o parsing de um objeto JSON simples (sem arrays), retornando um mapa chave-valor.
+     * @param objectContent String do objeto JSON
+     * @return Mapa com os pares chave-valor extraídos
+     */
     private static Map<String, String> parseJsonObject(String objectContent) {
         Map<String, String> map = new HashMap<>();
         if (objectContent == null || objectContent.trim().isEmpty()) {
@@ -163,6 +195,13 @@ public class JsonPersistence {
         return map;
     }
 
+    /**
+     * Salva as listas de tutores, setores e animais em um arquivo JSON.
+     * @param filename Caminho do arquivo JSON
+     * @param tutores Lista de tutores
+     * @param setores Lista de setores responsáveis
+     * @param animais Lista de animais
+     */
     public static void saveData(String filename, List<Tutor> tutores, List<SetorResponsavel> setores, List<Animal> animais) {
         StringBuilder jsonBuilder = new StringBuilder();
         jsonBuilder.append("{\n");
